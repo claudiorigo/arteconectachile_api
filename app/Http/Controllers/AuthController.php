@@ -18,7 +18,8 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        //Solo quedan de manera publica los metodos ['loginEcommerce', 'loginAdmin', 'register'] ningún otro. el metodo register() registra por defecto usuario cliente.
+        $this->middleware('auth:api', ['except' => ['loginEcommerce', 'loginAdmin', 'register']]);
     }
 
     /**
@@ -43,7 +44,9 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'surname' => $request->surname,
                 'email' => $request->email,
-                'password' => Hash::make($request->password)
+                'password' => Hash::make($request->password),
+                'type_user' => $request->type_user,
+                'state' => 1
             ]);
 
         return response()->json([
@@ -57,7 +60,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login(Request $request)
+    /* public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -69,6 +72,42 @@ class AuthController extends Controller
         }
 
         if (!$token = auth('api')->attempt($validator->validated())) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    } */
+
+    public function loginAdmin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        if (!$token = auth('api')->attempt(['email' => $request->email, 'password' => $request->password, 'state' => 1, 'type_user' => 2])) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    public function loginEcommerce(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        if (!$token = auth('api')->attempt(['email' => $request->email, 'password' => $request->password, 'state' => 1])) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -116,13 +155,29 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithToken($token)
+    /* protected function respondWithToken($token)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => auth('api')->user()
+        ]);
+    } */
+
+    protected function respondWithToken($token)
+    {
+        $user = auth('api')->user();
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'user' => [
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
         ]);
     }
 

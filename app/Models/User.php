@@ -23,7 +23,26 @@ class User extends Authenticatable implements JWTSubject
         'surname',
         'email',
         'password',
+        'type_user',
+        'state',
+        'role_id'
     ];
+
+    public function setPasswordAttribute($password){
+        if ($password) {
+            $this->attributes['password'] = bcrypt($password);
+        }
+    }
+
+    public function scopefilterAdvance($query, $state, $search){
+        if ($state) {
+            $query->where('state', $state);
+        }
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%')->orWhere('surname', 'like', '%' . $search . '%');
+        }
+        return $query;
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,6 +63,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function role(){
+        return $this->belongsTo(Role::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
