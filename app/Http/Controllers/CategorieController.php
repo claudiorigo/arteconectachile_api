@@ -9,6 +9,17 @@ use Illuminate\Support\Facades\Storage;
 class CategorieController extends Controller
 {
     /**
+     * Create a new AuthController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //Para acceder necesitas estar autenticado.
+        $this->middleware('auth:api');
+    }
+    
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
@@ -76,6 +87,7 @@ class CategorieController extends Controller
         $categorie->update($request->all());
         return response()->json([
             'categorie' => $categorie,
+            'message' => 201
         ]);
     }
 

@@ -1,10 +1,17 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategorieController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductImageController;
+use App\Http\Controllers\ProductColorController;
+use App\Http\Controllers\ProductSizeController;
+use App\Http\Controllers\ProductColorSizeController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,4 +58,37 @@ Route::group(['prefix' => 'categorias'], function($router) {
     Route::post('/crear', [CategorieController::class, 'store']);
     Route::post('/update/{id}', [CategorieController::class, 'update']);
     Route::delete('/delete/{id}', [CategorieController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'productos'], function($router) {
+    Route::get('/listar', [ProductController::class, 'index']);
+    Route::get('/ver/{id}', [ProductController::class, 'show']);
+    Route::post('/crear', [ProductController::class, 'store']);
+    Route::post('/update/{id}', [ProductController::class, 'update']);
+
+    Route::group(['prefix' => 'imagen'], function() {    
+        Route::post('/agregar', [ProductImageController::class, 'store']);
+        Route::delete('/eliminar/{id}', [ProductImageController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'inventario'], function() {                       //ProductColorSize
+        Route::post('/agregar', [ProductColorSizeController::class, 'store']);
+        Route::put('/actualizar/{id}', [ProductColorSizeController::class, 'update']);
+        Route::delete('/eliminar/{id}', [ProductColorSizeController::class, 'destroy']);
+    });
+});
+
+Route::group(['prefix' => 'colores'], function($router) {                       //ProductColor
+    Route::get('/listar', [ProductColorController::class, 'index']);
+    /* Route::post('/crear', [CategorieController::class, 'store']);
+    Route::post('/update/{id}', [CategorieController::class, 'update']);
+    Route::delete('/delete/{id}', [CategorieController::class, 'destroy']); */
+});
+
+Route::group(['prefix' => 'medidas'], function($router) {                       //ProductSize
+    /* Route::post('/crear', [CategorieController::class, 'store']);*/
+    Route::get('/listar', [ProductSizeController::class, 'index']);
+    Route::put('/actualizar/{id}', [ProductSizeController::class, 'update']);
+    Route::delete('/eliminar/{id}', [ProductSizeController::class, 'destroy']);
+    
 });
