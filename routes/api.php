@@ -3,11 +3,13 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategorieController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\ProductColorController;
 use App\Http\Controllers\ProductSizeController;
 use App\Http\Controllers\ProductColorSizeController;
+use App\Http\Controllers\SliderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -80,15 +82,26 @@ Route::group(['prefix' => 'productos'], function($router) {
 
 Route::group(['prefix' => 'colores'], function($router) {                       //ProductColor
     Route::get('/listar', [ProductColorController::class, 'index']);
-    /* Route::post('/crear', [CategorieController::class, 'store']);
-    Route::post('/update/{id}', [CategorieController::class, 'update']);
-    Route::delete('/delete/{id}', [CategorieController::class, 'destroy']); */
 });
 
-Route::group(['prefix' => 'medidas'], function($router) {                       //ProductSize
-    /* Route::post('/crear', [CategorieController::class, 'store']);*/
+Route::group(['prefix' => 'medidas'], function($router) {                       //ProductSize    
     Route::get('/listar', [ProductSizeController::class, 'index']);
     Route::put('/actualizar/{id}', [ProductSizeController::class, 'update']);
-    Route::delete('/eliminar/{id}', [ProductSizeController::class, 'destroy']);
-    
+    Route::delete('/eliminar/{id}', [ProductSizeController::class, 'destroy']);    
+});
+
+Route::group(['prefix' => 'sliders'], function($router) {
+    Route::get('/listar', [SliderController::class, 'index']);
+    Route::post('/crear', [SliderController::class, 'store']);
+    Route::post('/actualizar/{id}', [SliderController::class, 'update']);
+    Route::delete('/eliminar/{id}', [SliderController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'cupones'], function($router) {
+    Route::get('/listar', [CouponController::class, 'index']);
+    Route::get('/listar-categorias-productos', [CouponController::class, 'categories_products_all']);
+    Route::get('/ver/{id}', [CouponController::class, 'show']);
+    Route::post('/crear', [CouponController::class, 'store']);
+    Route::put('/actualizar/{id}', [CouponController::class, 'update']);
+    Route::delete('/eliminar/{id}', [CouponController::class, 'destroy']);
 });
