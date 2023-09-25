@@ -15,4 +15,8 @@ class Categorie extends Model
         'imagen',
         'icono',
     ];
+
+    public function products(){
+        return $this->hasMany(Product::class);
+    }
 }

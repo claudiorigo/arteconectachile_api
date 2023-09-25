@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategorieController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\Ecommerce\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\ProductColorController;
@@ -113,4 +114,8 @@ Route::group(['prefix' => 'descuentos'], function($router) {
     Route::post('/crear', [DiscountController::class, 'store']);
     Route::put('/actualizar/{id}', [DiscountController::class, 'update']);
     Route::delete('/eliminar/{id}', [DiscountController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'ecommerce'], function($router) {
+    Route::get('home', [HomeController::class, 'home']);
 });
